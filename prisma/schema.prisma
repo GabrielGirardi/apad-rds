@@ -1,0 +1,136 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  VIEWER
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  UNSET
+}
+
+enum AnimalStatus {
+  NEW_ARRIVAL
+  ADOPTABLE
+  TREATMENT
+  UNSET
+}
+
+enum ReportStatus {
+  AWAITING
+  IN_PROGRESS
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+  COMPLETED
+  CANCELLED
+  ON_HOLD
+}
+
+model User {
+  id         String    @id @default(cuid())
+  email      String    @unique
+  name       String
+  password   String
+  role       Role      @default(VIEWER)
+  isActive   Boolean   @default(true)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  validUntil DateTime? @default(dbgenerated("(now() + interval '1 year')"))
+  person     Person?   @relation(fields: [personId], references: [id], onDelete: Restrict)
+  personId   String?   @unique
+
+  @@map("users")
+}
+
+model Person {
+  id        String   @id @default(cuid())
+  name      String
+  cpf       String   @unique
+  birthDate DateTime @db.Date
+  gender    Gender   @default(UNSET)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User?
+
+  @@map("people")
+}
+
+model Animal {
+  id          String       @id @default(cuid())
+  name        String
+  description String?
+  species     String
+  breed       Breed        @relation(fields: [breedId], references: [id])
+  breedId     String
+  gender      Gender       @default(UNSET)
+  imageUrl    String?
+  status      AnimalStatus @default(UNSET)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@map("animals")
+}
+
+model Breed {
+  id      String @id @default(cuid())
+  name    String
+  animals Animal[]
+
+  @@map("breeds")
+}
+
+model Event {
+  id          String  @id @default(cuid())
+  title       String
+  description String?
+  isActive    Boolean @default(true)
+  tags        String[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  finishAt    DateTime @db.Date
+
+  @@map("events")
+}
+
+model Report {
+  id          String  @id @default(cuid())
+  title       String
+  description String?
+  address     String?
+  tags        String[]
+  status      ReportStatus
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("reports")
+}
+
+model Campaign {
+  id            String  @id @default(cuid())
+  title         String
+  description   String?
+  targetAmount  Decimal?
+  isActive      Boolean @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  finishAt      DateTime @db.Date
+
+  @@map("campaigns")
+}
