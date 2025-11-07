@@ -1,14 +1,11 @@
 "use client"
 
 import * as React from "react";
+import Image from "next/image";
+import { toast } from "sonner";
 import { z } from "zod";
 import { CSS } from "@dnd-kit/utilities";
-
 import { useMutation } from "@tanstack/react-query";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { useConfirmDialog } from "@/hooks/use-confirm-dialog";
-import { toast } from "sonner";
-
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import {
   closestCenter,
@@ -43,10 +40,16 @@ import {
   VisibilityState,
 } from "@tanstack/react-table";
 
+import AnimalForm from "./form";
+
+import { deleteAnimal } from "@/lib/api/animal";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { useConfirmDialog } from "@/hooks/use-confirm-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import DragHandle from "@/components/DragHandle";
 import {
   Drawer,
   DrawerClose,
@@ -84,7 +87,6 @@ import {
   Tabs,
   TabsContent
 } from "@/components/ui/tabs";
-import DragHandle from "@/components/DragHandle";
 
 import {
     IconChevronDown,
@@ -101,11 +103,12 @@ export const schema = z.object({
     name: z.string(),
     description: z.string().optional(),
     species: z.string(),
-    breed: z.string(),
-    gender: z.string(),
+    breedId: z.string(),
+    gender: z.enum(['MALE', 'FEMALE', 'UNSET']),
     imageUrl: z.string(),
-    status: z.string(),
+    status: z.enum(['NEW_ARRIVAL', 'ADOPTABLE', 'TREATMENT', 'UNSET']),
     createdAt: z.string(),
+    updatedAt: z.string(),
 });
 
 type AnimalActionProps = {
@@ -118,23 +121,23 @@ type StatusPayload = {
   status: boolean;
 }
 
-function PersonActions({ row, onRefresh }: AnimalActionProps) {
+function AnimalActions({ row, onRefresh }: AnimalActionProps) {
   const confirmDialog = useConfirmDialog();
-  /* const { mutate: mutateDelete } = useMutation({
-    mutationFn: deletePerson,
+  const { mutate: mutateDelete } = useMutation({
+    mutationFn: deleteAnimal,
     onSuccess: () => {
-      toast.success("Pessoas removida com sucesso!");
+      toast.success("Animal removido com sucesso!");
       onRefresh?.();
     },
     onError: () => {
-      toast.error("Erro ao remover a pessoa!");
+      toast.error("Erro ao remover o animal!");
     },
   });
 
   const handleDelete = async () => {
     const confirmed = await confirmDialog({
       title: "Confirmar exclusão?",
-      description: "Esta ação excluirá a pessoa permanentemente.",
+      description: "Esta ação excluirá o animal permanentemente.",
       confirmText: "Excluir",
       cancelText: "Cancelar",
     });
@@ -143,22 +146,6 @@ function PersonActions({ row, onRefresh }: AnimalActionProps) {
       mutateDelete(row.original.id);
     }
   }
-
-  const { mutate: mutateStatus } = useMutation({
-    mutationFn: ({ id, status }: StatusPayload) => changePersonStatus(id, status),
-    onSuccess: (data, variables) => {
-      toast.success(`Pessoa ${variables.status ? 'ativada' : 'desativada'} com sucesso!`)
-      onRefresh?.()
-    },
-    onError: () => {
-      toast.error("Erro ao atualizar o status da pessoas!")
-    },
-  })
-
-  const handleStatusToggle = () => {
-    const newStatus = !row.original.isActive
-    mutateStatus({ id: row.original.id, status: newStatus })
-  } */
 
   return (
     <DropdownMenu>
@@ -174,12 +161,16 @@ function PersonActions({ row, onRefresh }: AnimalActionProps) {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-32">
         <DropdownMenuItem onClick={(e) => e.stopPropagation()} asChild>
-          {/* form  */}
+          <AnimalForm
+            type="edit"
+            initialData={row.original}
+            onRefresh={onRefresh}
+          />
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        {/*<DropdownMenuItem variant="destructive" onClick={handleDelete}>*/}
-        {/*  Deletar*/}
-        {/*</DropdownMenuItem>*/}
+        <DropdownMenuItem variant="destructive" onClick={handleDelete}>
+          Deletar
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )
@@ -221,6 +212,18 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     ),
   },
   {
+    accessorKey: "updatedAt",
+    header: "Atualizado em",
+    enableColumnFilter: true,
+    cell: ({ row }) => (
+      <div className="w-32">
+        <Badge variant="outline" className="text-muted-foreground px-1.5">
+          {new Date(row.original.updatedAt).toLocaleDateString("pt-BR")}
+        </Badge>
+      </div>
+    ),
+  },
+  {
     accessorKey: "status",
     header: "Status",
     enableColumnFilter: true,
@@ -237,7 +240,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
   {
     id: "actions",
     cell: ({ row, table }) => (
-      <PersonActions
+      <AnimalActions
         row={row}
         // @ts-expect-error | use columnDef to get name
         onRefresh={table.options.meta?.onRefresh || []}
@@ -360,20 +363,22 @@ export function DataTable({
               className="w-full md:w-64"
             />
             <Select
-              value={(table.getColumn("isActive")?.getFilterValue() as string) ?? "all"}
+              value={(table.getColumn("status")?.getFilterValue() as string) ?? "all"}
               onValueChange={(value) =>
-                table.getColumn("isActive")?.setFilterValue(
+                table.getColumn("status")?.setFilterValue(
                   value === "all" ? undefined : value
                 )
               }
             >
-              <SelectTrigger className="h-8 w-40">
+              <SelectTrigger className="h-8 w-48">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todos (Status)</SelectItem>
-                <SelectItem value="true">Ativo</SelectItem>
-                <SelectItem value="false">Inativo</SelectItem>
+                <SelectItem value="NEW_ARRIVAL">Nova Chegada</SelectItem>
+                <SelectItem value="ADOPTABLE">Pronto pra Adoção</SelectItem>
+                <SelectItem value="TREATMENT">Em Tratamento</SelectItem>
+                <SelectItem value="UNSET">Não Definido</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -412,7 +417,7 @@ export function DataTable({
                   })}
               </DropdownMenuContent>
             </DropdownMenu>
-            {/*<PersonForm type="create" onRefresh={onRefresh} />*/}
+            <AnimalForm type="create" onRefresh={onRefresh} />
           </div>
         </div>
       </div>
@@ -606,6 +611,7 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
               </div>
             </div>
           </form>
+          <Image className="flex w-max h-64 object-contain mx-auto" src={item.imageUrl} alt="image" title="Imagem do animal" width={300} height={300} />
         </div>
         <DrawerFooter>
           <DrawerClose asChild>
