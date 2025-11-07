@@ -9,7 +9,7 @@ services:
       - .:/app
     environment:
       - NODE_ENV=development
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/auth_user_sys
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/apad
     depends_on:
       - db
 

@@ -15,7 +15,7 @@ export default function Login() {
   return (
     <NoAuthGuard>
       <div className="flex flex-wrap h-screen w-full relative md:grid md:grid-cols-2">
-        <div className="relative w-full h-3/5 md:h-full bg-gradient-to-tl from-[#962649] to-black p-12">
+        <div className="relative w-full h-2/5 md:h-full bg-gradient-to-tl from-[#962649] to-black p-12">
           <h1 className="text-white text-xl font-bold uppercase">
             <Image alt="logo apad" src="/logo-apad.png" width={118} height={134} />
           </h1>
@@ -23,8 +23,8 @@ export default function Login() {
             <Image alt="logo apad" src="/apad-login.png" width={768} height={420} />
           </div>
         </div>
-        <div className="flex flex-col gap-6 items-center justify-center bg-muted w-full h-2/5 md:h-full md:p-0 transition-colors">
-          <div className="flex items-center justify-center space-x-4 text-slate-400 p-2 bg-[#962649]/20 rounded-md w-full max-w-md">
+        <div className="flex flex-col gap-6 items-center justify-center bg-muted w-full h-3/5 md:h-full md:p-0 transition-colors">
+          <div className="flex items-center justify-center space-x-4 text-slate-400 p-2 bg-[#962649]/20 md:rounded-md w-full max-w-md">
             <Dog className="w-10 h-10 text-[#962649]" />
             <h2 className="font-bold text-2xl text-[#962649] uppercase">Abrigo digital</h2>
             <Cat className="w-10 h-10 text-[#962649]" />

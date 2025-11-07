@@ -1,13 +1,13 @@
 "use client"
 
 import { useState } from "react";
-import { loginAction } from "@/app/actions/auth";
-
 import { toast } from "sonner";
 
+import { loginAction } from "@/app/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Spinner } from "@/components/ui/spinner";
 
 import { Eye, EyeClosed } from "lucide-react";
 
@@ -70,7 +70,7 @@ export function LoginForm() {
         </div>
       </div>
       <Button type="submit" className="w-full dark:text-gray-200 bg-[#962649]/80 hover:bg-[#962649] cursor-pointer" disabled={isLoading}>
-        Entrar
+        { isLoading ? <Spinner /> : 'Entrar' }
       </Button>
     </form>
   );

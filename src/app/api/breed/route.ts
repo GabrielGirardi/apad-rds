@@ -5,17 +5,17 @@ import { canAccess } from "@/lib/permissions";
 import { getSession } from "@/lib/auth";
 
 /**
- * Manipulação de rotas para a tabela de pessoas (people) com operações CRUD.
+ * Manipulação de rotas para a tabela de raças (breeds) com operações CRUD.
  *
- * GET: Lista todos as pessoas.
- * POST: Cria uma nova pessoa.
+ * GET: Lista todas as raças.
+ * POST: Cria uma nova raça.
  */
 const prisma = new PrismaClient();
 
 /**
- * Lista todas as pessoas.
+ * Lista todas as raças.
  *
- * @returns Pessoas em formato JSON.
+ * @returns Raças em formato JSON.
  */
 export async function GET() {
   const session = await getSession();
@@ -23,17 +23,17 @@ export async function GET() {
     return new Response("Acesso negado", { status: 403 });
   }
 
-  const people = await prisma.person.findMany();
-  return NextResponse.json(people);
+  const breeds = await prisma.breed.findMany();
+  return NextResponse.json(breeds);
 }
 
 /**
- * Cria uma pessoa.
- * Requer os dados da pessoa no corpo da requisição.
- * O corpo deve conter os campos: name, cpf e birthDate.
+ * Cria uma raça.
+ * Requer os dados da raça no corpo da requisição.
+ * O corpo deve conter o campo: name.
  *
  * @param request
- * @returns Pessoa criada em formato JSON.
+ * @returns Raça criada em formato JSON.
  */
 export async function POST(request: Request) {
   const session = await getSession();
@@ -42,9 +42,11 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json();
-  const { name, cpf, birthDate, isActive } = body;
-  const newPerson = await prisma.person.create({
-    data: { name, cpf, birthDate, isActive },
+  const { name } = body;
+
+  const newBreed = await prisma.breed.create({
+    data: { name },
   });
-  return NextResponse.json(newPerson, { status: 201 });
+
+  return NextResponse.json(newBreed, { status: 201 });
 }

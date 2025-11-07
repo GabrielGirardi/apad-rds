@@ -1,11 +1,17 @@
 "use client"
 
+import { useEffect } from "react";
 import { Moon, Sun } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 
+import { Button } from "@/components/ui/button";
+
 export default function ButtonThemeToggler() {
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, resolvedTheme } = useTheme();
+
+  useEffect(()=> {
+    if (theme && theme === 'system' && resolvedTheme) return setTheme(resolvedTheme);
+  }, [theme, setTheme]);
 
   return (
     <Button

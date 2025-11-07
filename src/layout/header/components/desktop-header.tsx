@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useTheme } from "next-themes";
 import {
   User,
@@ -10,6 +11,7 @@ import {
   Dog,
 } from "lucide-react";
 
+import { menuItems } from "@/config/menu-items";
 import { logoutAction } from "@/app/actions/auth";
 import {
   Avatar,
@@ -49,21 +51,13 @@ export default function DesktopHeader({ user }: DesktopHeaderProps) {
 
         <nav>
           <ul className="flex space-x-4">
-            <li className="flex items-center justify-center hover:bg-[#962649] overflow-hidden rounded-md duration-500">
-              <a href="/dashboard" className="flex p-2 hover:text-gray-100 dark:text-gray-200 transition-colors">
-                Dashboard
-              </a>
-            </li>
-            <li className="flex items-center justify-center hover:bg-[#962649] overflow-hidden rounded-md duration-500">
-              <a href="/people" className="flex p-2 hover:text-gray-100 dark:text-gray-200 transition-colors">
-                Pessoas
-              </a>
-            </li>
-            <li className="flex items-center justify-center hover:bg-[#962649] overflow-hidden rounded-md duration-500">
-              <a href="/users" className="flex p-2 hover:text-gray-100 dark:text-gray-200 transition-colors">
-                Usuários
-              </a>
-            </li>
+            {menuItems.map((item, index) => (
+              <li className="flex items-center justify-center hover:bg-[#962649] overflow-hidden rounded-md duration-500" key={index}>
+                <Link href={item.href} className="flex p-2 hover:text-gray-100 dark:text-gray-200 transition-colors">
+                  {item.label}
+                </Link>
+              </li>
+            ))}
           </ul>
         </nav>
 

@@ -1,26 +1,24 @@
 "use client"
 
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 import { useTheme } from "next-themes";
 import {
   Menu,
-  Home,
-  UserPlus,
-  Users,
   LogOut,
   Moon,
   Sun,
   Dog,
 } from "lucide-react";
 
+import { menuItems } from "@/config/menu-items";
 import { logoutAction } from "@/app/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import {
   Avatar,
   AvatarFallback,
-  AvatarImage
 } from "@/components/ui/avatar";
 import {
   Sheet,
@@ -92,33 +90,16 @@ export default function MobileHeader({ user }: MobileHeaderProps) {
             <nav className="flex-1 px-6 py-4">
               <div className="space-y-2">
                 <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Navegação</h3>
-
-                <a
-                  href="/dashboard"
-                  onClick={handleLinkClick}
-                  className="flex items-center gap-3 px-3 py-2 rounded-md bg-[#962649] text-white hover:bg-[#7e1f3b] transition-colors"
-                >
-                  <Home className="w-4 h-4" />
-                  Dashboard
-                </a>
-
-                <a
-                  href="/people"
-                  onClick={handleLinkClick}
-                  className="flex items-center gap-3 px-3 py-2 rounded-md bg-[#962649] text-white hover:bg-[#7e1f3b] transition-colors"
-                >
-                  <Users className="w-4 h-4" />
-                  Pessoas
-                </a>
-
-                <a
-                  href="/users"
-                  onClick={handleLinkClick}
-                 className="flex items-center gap-3 px-3 py-2 rounded-md bg-[#962649] text-white hover:bg-[#7e1f3b] transition-colors"
-                >
-                  <UserPlus className="w-4 h-4" />
-                  Usuários
-                </a>
+                {menuItems.map((item, index)=> (
+                  <Link
+                    key={index}
+                    href={item.href}
+                    onClick={handleLinkClick}
+                    className="flex items-center gap-3 px-3 py-2 rounded-md bg-[#962649] text-white hover:bg-[#7e1f3b] transition-colors"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
               </div>
 
               <Separator className="my-4" />
