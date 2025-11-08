@@ -11,7 +11,7 @@ export default function ButtonThemeToggler() {
 
   useEffect(()=> {
     if (theme && theme === 'system' && resolvedTheme) return setTheme(resolvedTheme);
-  }, [theme, setTheme]);
+  }, [theme, setTheme, resolvedTheme]);
 
   return (
     <Button

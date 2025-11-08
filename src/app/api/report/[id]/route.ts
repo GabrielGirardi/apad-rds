@@ -31,11 +31,11 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ message: "ID ausente na URL" }, { status: 400 });
   }
 
-  const { title, description, type, status } = await request.json();
+  const { title, description, type: reportType, status } = await request.json();
 
   const updated = await prisma.report.update({
     where: { id: String(id) },
-    data: { title, description, type, status },
+    data: { title, description, status, type: reportType },
   });
 
   return NextResponse.json(updated);

@@ -4,7 +4,6 @@ import { saveAnimal } from "@/lib/api/animal";
 import { toast } from "sonner";
 
 import { useBreed } from "@/hooks/use-breed";
-import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -29,15 +28,13 @@ import {
 import {
   Plus,
   PawPrint,
-  Image,
+  Image as ImageIcon,
   Settings,
   Tag,
   X,
   Save,
   ChevronDown,
   Layers,
-  Venus,
-  Mars,
   HelpCircle
 } from "lucide-react";
 
@@ -191,7 +188,7 @@ export default function AnimalForm({
               <select
                 id="gender"
                 value={gender}
-                onChange={(e) => setGender(e.target.value as any)}
+                onChange={(e) => setGender(e.target.value as 'MALE' | 'FEMALE' | 'UNSET')}
                 className="w-full h-11 border border-gray-300 rounded-md px-3"
               >
                 <option value="UNSET">Não definido</option>
@@ -208,7 +205,7 @@ export default function AnimalForm({
               <select
                 id="status"
                 value={status}
-                onChange={(e) => setStatus(e.target.value as any)}
+                onChange={(e) => setStatus(e.target.value as 'UNSET' | 'NEW_ARRIVAL' | 'ADOPTABLE' | 'TREATMENT')}
                 className="w-full h-11 border border-gray-300 rounded-md px-3"
               >
                 <option value="UNSET">Não definido</option>
@@ -233,7 +230,7 @@ export default function AnimalForm({
 
             <div className="space-y-2 md:col-span-2">
               <Label htmlFor="imageUrl" className="flex items-center gap-2">
-                <Image className="w-4 h-4" />
+                <ImageIcon className="w-4 h-4" />
                 URL da Imagem
               </Label>
               <Input
