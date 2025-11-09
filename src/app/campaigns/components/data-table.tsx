@@ -3,6 +3,7 @@ import { z } from "zod";
 import { CSS } from "@dnd-kit/utilities";
 import { toast } from "sonner";
 import { useMutation } from "@tanstack/react-query";
+
 import {
   DndContext,
   useSensor,
@@ -32,6 +33,7 @@ import {
   SortingState,
   useReactTable,
   VisibilityState,
+  Cell,
 } from "@tanstack/react-table";
 
 import CampaignForm from "./form";
@@ -143,7 +145,18 @@ function CampaignActions({ row, onRefresh }: ActionProps) {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-40">
         <DropdownMenuItem onClick={(e: React.MouseEvent) => e.stopPropagation()} asChild>
-          <CampaignForm type="edit" initialData={row.original} onRefresh={onRefresh} />
+          <CampaignForm
+            type="edit"
+            initialData={{
+              id: row.original.id,
+              title: row.original.title,
+              description: row.original.description ?? undefined,
+              targetAmount: row.original.targetAmount ? Number(row.original.targetAmount) : undefined,
+              finishAt: row.original.finishAt ?? '',
+              isActive: row.original.isActive,
+            }}
+            onRefresh={onRefresh}
+          />
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem variant="destructive" onClick={handleDelete}>Excluir</DropdownMenuItem>
@@ -216,7 +229,8 @@ const columns: ColumnDef<CampaignRow>[] = [
     cell: ({ row, table }: { row: Row<CampaignRow>; table: TanStackTable<CampaignRow> }) => (
       <CampaignActions
         row={row}
-        onRefresh={table.options.meta?.onRefresh || (() => {})}
+        // @ts-expect-error | use columnDef to get name
+        onRefresh={table.options.meta?.onRefresh || []}
       />
     ),
   },
@@ -337,6 +351,7 @@ export function DataTable({
                         checked={column.getIsVisible()}
                         onCheckedChange={(value: boolean) => column.toggleVisibility(!!value)}
                       >
+                        {/* @ts-expect-error | use columnDef to get name */}
                         {column.columnDef.header || column.id}
                       </DropdownMenuCheckboxItem>
                     );
@@ -353,9 +368,9 @@ export function DataTable({
           <DndContext collisionDetection={closestCenter} modifiers={[restrictToVerticalAxis]} onDragEnd={handleDragEnd} sensors={sensors} id={sortableId}>
             <Table>
               <TableHeader className="bg-muted sticky top-0 z-10">
-                {table.getHeaderGroups().map((headerGroup: HeaderGroup<CampaignRow>) => (
+                {table.getHeaderGroups().map((headerGroup) => (
                   <TableRow key={headerGroup.id}>
-                    {headerGroup.headers.map((header: Header<CampaignRow, unknown>) => {
+                    {headerGroup.headers.map((header) => {
                       return (
                         <TableHead key={header.id} colSpan={header.colSpan}>
                           {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}

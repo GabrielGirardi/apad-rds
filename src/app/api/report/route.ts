@@ -5,17 +5,16 @@ import { canAccess } from "@/lib/permissions";
 import { getSession } from "@/lib/auth";
 
 /**
- * Manipulação de rotas para a tabela de relatórios (reports) com operações CRUD.
+ * Manipulação de rotas para a tabela de denúncias (reports) com operações CRUD.
  *
- * GET: Lista todos os relatórios.
- * POST: Cria um novo relatório.
+ * GET: Lista todos as denúncias POST: Cria uma nova denúncia.
  */
 const prisma = new PrismaClient();
 
 /**
- * Lista todos os relatórios.
+ * Lista todos as denúncias.
  *
- * @returns Relatórios em formato JSON.
+ * @returns denúncias em formato JSON.
  */
 export async function GET() {
   const session = await getSession();
@@ -42,13 +41,14 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json();
-  const { title, description, type, status } = body;
+  const { title, description, address, tags, status } = body;
 
   const newReport = await prisma.report.create({
     data: {
       title,
       description,
-      type,
+      address,
+      tags,
       status,
     },
   });

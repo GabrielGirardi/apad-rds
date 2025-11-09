@@ -41,15 +41,15 @@ type EventFormProps = {
 
 type EventFormState = {
   type: 'edit' | 'create';
-  onRefresh: () => void;
+  onRefresh?: () => void;
 };
 
 export default function EventForm({
-                                    initialData,
-                                    type,
-                                    onRefresh
-                                  }: EventFormProps & EventFormState) {
-  const [open, setOpen] = React.useState(false);
+  initialData,
+  type,
+  onRefresh
+}: EventFormProps & EventFormState) {
+const [open, setOpen] = React.useState(false);
   const [title, setTitle] = React.useState(initialData?.title || '');
   const [description, setDescription] = React.useState(initialData?.description || '');
   const [tags, setTags] = React.useState(initialData?.tags.join(', ') || '');

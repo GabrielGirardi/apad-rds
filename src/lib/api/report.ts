@@ -1,15 +1,22 @@
 export type ReportPayload = {
-    title: string;
-    description?: string;
-    type: string;
-    status: string;
-  };
+  title: string;
+  description?: string;
+  address?: string,
+  tags: string[],
+  status: 'AWAITING' | 'IN_PROGRESS' | 'UNDER_REVIEW' | 'APPROVED' | 'REJECTED' | 'COMPLETED' | 'CANCELLED' | 'ON_HOLD';
+};
+
+export type Report = ReportPayload & {
+  id: string
+  createdAt?: string
+  updatedAt?: string
+}
 
   export async function getReports() {
     const res = await fetch('/api/report');
 
     if (!res.ok) {
-      throw new Error('Erro ao buscar relatórios');
+      throw new Error('Erro ao buscar denúncias');
     }
 
     return res.json();

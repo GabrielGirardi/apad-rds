@@ -1,62 +1,33 @@
 import AuthGuard from "@/components/auth/auth-guard";
 import { getDashboardData } from "@/lib/dashboard";
-
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from "@/components/ui/card";
-
-interface DashboardData {
-  totalPeople: number;
-  totalUsers: number;
-}
+import { StatsCards } from "./components/stats-cards";
+import { ReportStatusChart } from "./components/report-status-chart";
+import { AnimalStatusChart } from "./components/animal-status-chart";
+import { QuickStats } from "./components/quick-stats";
 
 export default async function Dashboard() {
-  const {
-    totalPeople,
-    totalUsers
-  }: DashboardData = await getDashboardData()
-
-  const CardItems = [
-    {
-      title: 'Pessoas cadastradas',
-      description: 'Total de pessoas cadastradas no sistema',
-      value: totalPeople,
-    },
-    {
-        title: 'Usuário cadastrados',
-        description: 'Total de usuários cadastrados no sistema',
-        value: totalUsers,
-    }
-  ]
+  const data = await getDashboardData();
 
   return (
     <AuthGuard>
-      <div className="container mx-auto md:py-8 text-gray-500 p-4 md:p-0">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-lg font-bold dark:text-gray-200">Dashboard</h1>
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto p-4 md:p-8 space-y-8">
+          <div className="space-y-2">
+            <h1 className="text-3xl font-bold tracking-tight text-foreground">Dashboard</h1>
+            <p className="text-muted-foreground">Visão geral do sistema de gestão</p>
           </div>
-        </div>
-        <div className="grid gap-6 md:grid-cols-2">
-          {CardItems.map((card, index) => (
-            <Card className="shadow-sm border-none bg-[#962649]/95 dark:bg-[#962649]/20" key={index}>
-              <CardHeader>
-                <CardTitle className="text-[#fafafa]">{card.title}</CardTitle>
-                <CardDescription className="text-[#cccccc] dark:text-[#8b8789]">{card.description}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <h3 className="text-4xl font-bold text-[#fafafa]">
-                  { card.value }
-                </h3>
-              </CardContent>
-            </Card>
-          ))}
+
+          <StatsCards data={data} />
+
+          <div className="grid gap-6 lg:grid-cols-2">
+            <ReportStatusChart data={data.reportStatusSummary} />
+            <AnimalStatusChart data={data.animalStatusSummary} />
+          </div>
+
+          {/* Quick Stats */}
+          <QuickStats data={data} />
         </div>
       </div>
     </AuthGuard>
-  );
+  )
 }

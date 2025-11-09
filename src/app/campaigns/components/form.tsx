@@ -45,10 +45,10 @@ type CampaignFormState = {
 };
 
 export default function CampaignForm({
-                                       initialData,
-                                       type,
-                                       onRefresh
-                                     }: CampaignFormProps & CampaignFormState) {
+  initialData,
+  type,
+  onRefresh
+}: CampaignFormProps & CampaignFormState) {
   const [open, setOpen] = React.useState(false);
   const [title, setTitle] = React.useState(initialData?.title || '');
   const [description, setDescription] = React.useState(initialData?.description || '');

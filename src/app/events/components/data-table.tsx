@@ -1,7 +1,6 @@
 "use client"
 
 import * as React from "react";
-import Image from "next/image";
 import { toast } from "sonner";
 import { z } from "zod";
 import { CSS } from "@dnd-kit/utilities";
@@ -113,7 +112,7 @@ type EventRow = z.infer<typeof schema>;
 
 type EventActionProps = {
   row: Row<EventRow>;
-  onRefresh?: () => void;
+  onRefresh: () => void;
 };
 
 function EventActions({ row, onRefresh }: EventActionProps) {
@@ -221,7 +220,7 @@ const columns: ColumnDef<EventRow>[] = [
       if (!filterValue) return true
       return String(row.getValue(columnId)) === filterValue
     },
-    cell: ({ row }: Row<EventRow>) => (
+    cell: ({ row }) => (
       <Badge variant="outline" className="text-muted-foreground px-1.5">
         {row.original.isActive ? (
           <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />
@@ -237,10 +236,11 @@ const columns: ColumnDef<EventRow>[] = [
   },
   {
     id: "actions",
-    cell: ({ row, table }: { row: Row<EventRow>; table: TanStackTable<EventRow> }) => (
+cell: ({ row, table }) => (
       <EventActions
         row={row}
-        onRefresh={table.options.meta?.onRefresh}
+        // @ts-expect-error | use columnDef to get name
+        onRefresh={table.options.meta?.onRefresh || []}
       />
     ),
   },
@@ -398,6 +398,7 @@ export function DataTable({
                           column.toggleVisibility(!!value)
                         }
                       >
+                        {/* @ts-expect-error | use columnDef to get name */}
                         {column.columnDef.header || column.id}
                       </DropdownMenuCheckboxItem>
                     );
@@ -569,26 +570,16 @@ function TableCellViewer({ item }: { item: EventRow }) {
               <Input id="description" disabled defaultValue={item.description} />
             </div>
             <div className="grid grid-cols-2 gap-4">
-              {/*<div className="flex flex-col gap-3">*/}
-              {/*  <Label htmlFor="date">Data</Label>*/}
-              {/*  <Input id="date" type="date" disabled defaultValue={item.date.split("T")[0]} />*/}
-              {/*</div>*/}
+              <div className="flex flex-col gap-3">
+                <Label htmlFor="location">Criado em</Label>
+                <Input id="location" type="date" disabled defaultValue={item.createdAt.split('T')[0]} />
+              </div>
               <div className="flex flex-col gap-3">
                 <Label htmlFor="status">Status</Label>
-                <Input id="status" disabled defaultValue={item.status} />
+                <Input id="status" disabled defaultValue={item.isActive ? 'Ativo' : 'Inativo'} />
               </div>
             </div>
           </form>
-          {item.imageUrl && (
-            <Image
-              className="flex w-max h-64 object-contain mx-auto"
-              src={item.imageUrl}
-              alt="image"
-              title="Imagem do evento"
-              width={300}
-              height={300}
-            />
-          )}
         </div>
         <DrawerFooter>
           <DrawerClose asChild>

@@ -6,7 +6,7 @@ import { canAccess } from "@/lib/permissions";
 import { getSession } from "@/lib/auth";
 
 /**
- * Manipulação de rotas dinâmicas para relatórios (report) com operações CRUD.
+ * Manipulação de rotas dinâmicas para denúncias com operações CRUD.
  *
  * PUT: Atualiza um relatório existente.
  * DELETE: Deleta um relatório existente.
@@ -31,11 +31,11 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ message: "ID ausente na URL" }, { status: 400 });
   }
 
-  const { title, description, type: reportType, status } = await request.json();
+  const { title, description, address, tags, status } = await request.json();
 
   const updated = await prisma.report.update({
     where: { id: String(id) },
-    data: { title, description, status, type: reportType },
+    data: { title, description, address, tags, status },
   });
 
   return NextResponse.json(updated);
