@@ -40,6 +40,7 @@ import CampaignForm from "./form";
 import { deleteCampaign } from "@/lib/api/campaign";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useConfirmDialog } from "@/hooks/use-confirm-dialog";
+import { useSession } from "@/hooks/use-session";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -114,6 +115,8 @@ type ActionProps = {
 
 function CampaignActions({ row, onRefresh }: ActionProps) {
   const confirmDialog = useConfirmDialog();
+  const { isViewer, loading } = useSession();
+
   const { mutate: mutateDelete } = useMutation({
     mutationFn: deleteCampaign,
     onSuccess: () => {
@@ -135,10 +138,12 @@ function CampaignActions({ row, onRefresh }: ActionProps) {
     if (confirmed) mutateDelete(row.original.id);
   };
 
+  if (loading) return null;
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="data-[state=open]:bg-muted text-muted-foreground flex size-8" size="icon">
+        <Button variant="ghost" className="data-[state=open]:bg-muted text-muted-foreground flex size-8" hidden={isViewer} size="icon">
           <IconDotsVertical />
           <span className="sr-only">Abrir menu</span>
         </Button>
@@ -269,6 +274,8 @@ export function DataTable({
   const sensors = useSensors(useSensor(MouseSensor, {}), useSensor(TouchSensor, {}), useSensor(KeyboardSensor, {}));
   const sortableId = React.useId();
 
+  const { isViewer, loading } = useSession();
+
   React.useEffect(() => setData(initialData), [initialData]);
 
   const dataIds = React.useMemo<UniqueIdentifier[]>(() => data?.map(({ id }) => id) || [], [data]);
@@ -303,6 +310,8 @@ export function DataTable({
       });
     }
   }
+
+  if (loading) return null;
 
   return (
     <Tabs defaultValue="list" className="w-full flex-col justify-start gap-6 mb-24">
@@ -358,7 +367,7 @@ export function DataTable({
                   })}
               </DropdownMenuContent>
             </DropdownMenu>
-            <CampaignForm type="create" onRefresh={onRefresh} />
+            {!isViewer && (<CampaignForm type="create" onRefresh={onRefresh} />)}
           </div>
         </div>
       </div>

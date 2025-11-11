@@ -185,16 +185,16 @@ export default function AnimalForm({
                 <ChevronDown className="w-4 h-4" />
                 Gênero
               </Label>
-              <select
-                id="gender"
-                value={gender}
-                onChange={(e) => setGender(e.target.value as 'MALE' | 'FEMALE' | 'UNSET')}
-                className="w-full h-11 border border-gray-300 rounded-md px-3"
-              >
-                <option value="UNSET">Não definido</option>
-                <option value="MALE">Macho</option>
-                <option value="FEMALE">Fêmea</option>
-              </select>
+              <Select value={gender} onValueChange={(value: 'MALE' | 'FEMALE' | 'UNSET') => setGender(value)}>
+                <SelectTrigger className="!h-11 border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full">
+                  <SelectValue placeholder="Selecione um gênero" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="UNSET">Não definido</SelectItem>
+                  <SelectItem value="MALE">Macho</SelectItem>
+                  <SelectItem value="FEMALE">Fêmea</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="space-y-2">
@@ -202,17 +202,17 @@ export default function AnimalForm({
                 <Settings className="w-4 h-4" />
                 Status
               </Label>
-              <select
-                id="status"
-                value={status}
-                onChange={(e) => setStatus(e.target.value as 'UNSET' | 'NEW_ARRIVAL' | 'ADOPTABLE' | 'TREATMENT')}
-                className="w-full h-11 border border-gray-300 rounded-md px-3"
-              >
-                <option value="UNSET">Não definido</option>
-                <option value="NEW_ARRIVAL">Recém-chegado</option>
-                <option value="ADOPTABLE">Adotável</option>
-                <option value="TREATMENT">Em tratamento</option>
-              </select>
+              <Select value={status} onValueChange={(value: 'UNSET' | 'NEW_ARRIVAL' | 'ADOPTABLE' | 'TREATMENT') => setStatus(value)}>
+                <SelectTrigger className="!h-11 border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full">
+                  <SelectValue placeholder="Selecione um status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="UNSET">Não definido</SelectItem>
+                  <SelectItem value="NEW_ARRIVAL">Recém-chegado</SelectItem>
+                  <SelectItem value="ADOPTABLE">Adotável</SelectItem>
+                  <SelectItem value="TREATMENT">Em tratamento</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="space-y-2 md:col-span-2">

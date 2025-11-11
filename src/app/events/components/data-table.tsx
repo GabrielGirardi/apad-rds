@@ -41,6 +41,7 @@ import {
 
 import EventForm from "./form";
 
+import { useSession } from "@/hooks/use-session";
 import { deleteEvent } from "@/lib/api/event";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useConfirmDialog } from "@/hooks/use-confirm-dialog";
@@ -117,6 +118,9 @@ type EventActionProps = {
 
 function EventActions({ row, onRefresh }: EventActionProps) {
   const confirmDialog = useConfirmDialog();
+
+  const { isViewer, loading } = useSession();
+
   const { mutate: mutateDelete } = useMutation({
     mutationFn: deleteEvent,
     onSuccess: () => {
@@ -141,6 +145,8 @@ function EventActions({ row, onRefresh }: EventActionProps) {
     }
   };
 
+  if (loading) return null;
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -148,6 +154,7 @@ function EventActions({ row, onRefresh }: EventActionProps) {
           variant="ghost"
           className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
           size="icon"
+          hidden={isViewer}
         >
           <IconDotsVertical />
           <span className="sr-only">Open menu</span>
@@ -291,6 +298,8 @@ export function DataTable({
     useSensor(KeyboardSensor, {})
   );
 
+  const { isViewer, loading } = useSession();
+
   React.useEffect(() => {
     setData(initialData ?? []);
   }, [initialData]);
@@ -338,6 +347,8 @@ export function DataTable({
       });
     }
   }
+
+  if (loading) return null;
 
   return (
     <Tabs defaultValue="outline" className="w-full flex-col justify-start gap-6 mb-24">
@@ -405,7 +416,7 @@ export function DataTable({
                   })}
               </DropdownMenuContent>
             </DropdownMenu>
-            <EventForm type="create" onRefresh={onRefresh} />
+            {!isViewer && (<EventForm type="create" onRefresh={onRefresh} />)}
           </div>
         </div>
       </div>

@@ -73,7 +73,7 @@ export function StatsCards({ data }: StatsCardsProps) {
         return (
           <Card
             key={index}
-            className="border-none bg-gradient-to-br shadow-lg hover:shadow-xl transition-shadow duration-300"
+            className="border-none bg-gradient-to-br shadow-lg hover:shadow-xl transition-shadow duration-300 dark:bg-card dark:text-card-foreground"
             style={{
               backgroundImage: `linear-gradient(135deg, ${card.color.split(" ")[0].replace("from-", "")}, ${card.color.split(" ")[1].replace("to-", "")})`,
             }}
@@ -81,7 +81,7 @@ export function StatsCards({ data }: StatsCardsProps) {
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-sm font-medium text-black dark:text-white/90">{card.title}</CardTitle>
-                <Icon className="h-4 w-4 text-white/80" />
+                <Icon className="h-4 w-4 text-foreground" />
               </div>
               <CardDescription className="text-foreground dark:text-white/70 text-xs">{card.description}</CardDescription>
             </CardHeader>

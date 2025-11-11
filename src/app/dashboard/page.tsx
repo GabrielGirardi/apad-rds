@@ -19,12 +19,11 @@ export default async function Dashboard() {
 
           <StatsCards data={data} />
 
-          <div className="grid gap-6 lg:grid-cols-2">
+          <div className="hidden md:grid gap-6 lg:grid-cols-2">
             <ReportStatusChart data={data.reportStatusSummary} />
             <AnimalStatusChart data={data.animalStatusSummary} />
           </div>
 
-          {/* Quick Stats */}
           <QuickStats data={data} />
         </div>
       </div>

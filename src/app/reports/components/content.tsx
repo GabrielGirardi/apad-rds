@@ -4,6 +4,8 @@ import { useState, useMemo } from "react";
 import useSWR from "swr";
 import { toast } from "sonner";
 import { CheckCircle2, Clock, FileText, Plus, Search, XCircle, PawPrint, Timer } from "lucide-react";
+
+import { useSession } from "@/hooks/use-session";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -19,6 +21,8 @@ export default function ReportsPageContent() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
   const [dialogMode, setDialogMode] = useState<"create" | "edit" | "view">("create");
+
+  const { isViewer, loading } = useSession();
 
   const filteredReports = useMemo(() => {
     if (!reports) return []
@@ -89,6 +93,8 @@ export default function ReportsPageContent() {
     setDialogOpen(true);
   };
 
+  if (loading) return null;
+
   return (
     <>
       <div className="min-h-screen bg-background">
@@ -103,7 +109,7 @@ export default function ReportsPageContent() {
                 Gerencie denúncias de animais resgatados e em situação de risco
               </p>
             </div>
-            <Button onClick={handleCreate} size="lg" className="gap-2">
+            <Button onClick={handleCreate} size="lg" className="gap-2" hidden={isViewer}>
               <Plus className="h-5 w-5" />
               Nova Denúncia
             </Button>
@@ -200,6 +206,7 @@ export default function ReportsPageContent() {
                   onView={handleView}
                   onEdit={handleEdit}
                   onDelete={handleDelete}
+                  isViewer={isViewer}
                 />
               ))}
             </div>

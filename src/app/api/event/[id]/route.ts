@@ -36,7 +36,13 @@ export async function PUT(request: NextRequest) {
 
   const updated = await prisma.event.update({
     where: { id: String(id) },
-    data: { title, description, isActive, tags, finishAt },
+    data: {
+      title,
+      description,
+      isActive,
+      tags,
+      finishAt: new Date(finishAt),
+    },
   });
 
   return NextResponse.json(updated);

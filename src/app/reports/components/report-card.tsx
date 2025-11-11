@@ -1,17 +1,18 @@
 "use client"
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { MoreHorizontal, Eye, Edit, Trash2, MapPin } from "lucide-react"
-import type { Report } from "@/lib/api/report"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { MoreHorizontal, Eye, Edit, Trash2, MapPin } from "lucide-react";
+import type { Report } from "@/lib/api/report";
 
 interface ReportCardProps {
-  report: Report
-  onView: (report: Report) => void
-  onEdit: (report: Report) => void
-  onDelete: (id: string) => void
+  report: Report;
+  onView: (report: Report) => void;
+  onEdit: (report: Report) => void;
+  onDelete: (id: string) => void;
+  isViewer: boolean;
 }
 
 const statusColors = {
@@ -36,7 +37,7 @@ const statusLabels = {
   ON_HOLD: "Em Espera",
 }
 
-export function ReportCard({ report, onView, onEdit, onDelete }: ReportCardProps) {
+export function ReportCard({ report, onView, onEdit, onDelete, isViewer }: ReportCardProps) {
   const statusKey = report.status as keyof typeof statusColors
 
   return (
@@ -56,6 +57,7 @@ export function ReportCard({ report, onView, onEdit, onDelete }: ReportCardProps
               variant="ghost"
               size="icon"
               className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
+              hidden={isViewer}
             >
               <MoreHorizontal className="h-4 w-4" />
               <span className="sr-only">Abrir menu</span>

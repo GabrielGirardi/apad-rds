@@ -8,6 +8,7 @@ import { deleteUser, changeUserStatus } from "@/lib/api/user";
 import { useMutation } from "@tanstack/react-query";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useConfirmDialog } from "@/hooks/use-confirm-dialog";
+import { useSession } from "@/hooks/use-session";
 import { toast } from "sonner";
 
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
@@ -148,6 +149,8 @@ type StatusPayload = {
 
 function UserActions({ row, onRefresh }: UserActionsProps) {
   const confirmDialog = useConfirmDialog();
+  const { isViewer, loading } = useSession();
+
   const { mutate: mutateDelete } = useMutation({
     mutationFn: deleteUser,
     onSuccess: () => {
@@ -188,6 +191,8 @@ function UserActions({ row, onRefresh }: UserActionsProps) {
     mutateStatus({ id: row.original.id, status: newStatus })
   }
 
+  if (loading) return null;
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -195,6 +200,7 @@ function UserActions({ row, onRefresh }: UserActionsProps) {
           variant="ghost"
           className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
           size="icon"
+          hidden={isViewer}
         >
           <IconDotsVertical/>
           <span className="sr-only">Open menu</span>
@@ -374,6 +380,8 @@ export function DataTable({
     useSensor(KeyboardSensor, {})
   );
 
+  const { isViewer, loading } = useSession();
+
   React.useEffect(() => {
     setData(initialData);
   }, [initialData]);
@@ -420,6 +428,8 @@ export function DataTable({
       });
     }
   }
+
+  if (loading) return null;
 
   return (
     <Tabs
@@ -509,7 +519,7 @@ export function DataTable({
                   })}
               </DropdownMenuContent>
             </DropdownMenu>
-            <UserForm type="create" onRefresh={onRefresh} />
+            {!isViewer && (<UserForm type="create" onRefresh={onRefresh} />)}
           </div>
         </div>
       </div>

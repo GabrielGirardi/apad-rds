@@ -1,5 +1,5 @@
-type Role = "ADMIN" | "VIEWER";
-type Action = "view" | "edit" | "delete" | "create";
+export type Role = "ADMIN" | "VIEWER";
+export type Action = "view" | "edit" | "delete" | "create";
 
 const permissionsMap: Record<Role, Action[]> = {
   ADMIN: ["view", "edit", "delete", "create"],

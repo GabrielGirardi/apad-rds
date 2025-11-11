@@ -40,6 +40,8 @@ import {
   VisibilityState,
 } from "@tanstack/react-table";
 
+import { useSession } from "@/hooks/use-session";
+
 import AnimalForm from "./form";
 
 import { deleteAnimal } from "@/lib/api/animal";
@@ -97,6 +99,7 @@ import {
     IconDotsVertical,
     IconLayoutColumns
 } from "@tabler/icons-react";
+import { animalStatusTranslate } from "@/helper/formatter";
 
 export const schema = z.object({
     id: z.string(),
@@ -118,6 +121,9 @@ type AnimalActionProps = {
 
 function AnimalActions({ row, onRefresh }: AnimalActionProps) {
   const confirmDialog = useConfirmDialog();
+
+  const { isViewer, loading } = useSession();
+
   const { mutate: mutateDelete } = useMutation({
     mutationFn: deleteAnimal,
     onSuccess: () => {
@@ -142,6 +148,8 @@ function AnimalActions({ row, onRefresh }: AnimalActionProps) {
     }
   }
 
+  if (loading) return null;
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -149,6 +157,7 @@ function AnimalActions({ row, onRefresh }: AnimalActionProps) {
           variant="ghost"
           className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
           size="icon"
+          hidden={isViewer}
         >
           <IconDotsVertical/>
           <span className="sr-only">Open menu</span>
@@ -228,7 +237,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     },
     cell: ({ row }) => (
       <Badge variant="outline" className="text-muted-foreground px-1.5">
-        {row.original.status}
+        {animalStatusTranslate(row.original.status)}
       </Badge>
     ),
   },
@@ -292,6 +301,8 @@ export function DataTable({
     useSensor(KeyboardSensor, {})
   );
 
+  const { isViewer, loading } = useSession();
+
   React.useEffect(() => {
     setData(initialData);
   }, [initialData]);
@@ -338,6 +349,8 @@ export function DataTable({
       });
     }
   }
+
+  if (loading) return null;
 
   return (
     <Tabs
@@ -412,7 +425,7 @@ export function DataTable({
                   })}
               </DropdownMenuContent>
             </DropdownMenu>
-            <AnimalForm type="create" onRefresh={onRefresh} />
+            {!isViewer && (<AnimalForm type="create" onRefresh={onRefresh} />)}
           </div>
         </div>
       </div>
