@@ -32,15 +32,17 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ message: "ID ausente na URL" }, { status: 400 });
   }
 
-  const { title, description, isActive, tags, finishAt } = await request.json();
+  const { title, description, organizer, isActive, tags, startAt, finishAt } = await request.json();
 
   const updated = await prisma.event.update({
     where: { id: String(id) },
     data: {
       title,
       description,
+      organizer,
       isActive,
       tags,
+      startAt: new Date(startAt),
       finishAt: new Date(finishAt),
     },
   });

@@ -1,7 +1,9 @@
 export type EventPayload = {
     title: string;
     description?: string;
+    organizer?: string;
     tags: string[];
+    startAt: string;
     finishAt: string;
     isActive: boolean;
   };

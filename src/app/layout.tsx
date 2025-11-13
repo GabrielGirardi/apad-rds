@@ -22,8 +22,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Gerenciador de Usuários",
-  description: "Sistema para controle e gerenciamento de usuários",
+  title: "Apad - Abrigo Digital",
+  description: "Sistema para controle e gerenciamento de animais",
 };
 
 export default async function RootLayout({

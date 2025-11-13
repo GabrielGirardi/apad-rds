@@ -1,8 +1,10 @@
+import { Breed } from "@prisma/client";
+
 export type AnimalPayload = {
   name: string;
   description: string;
-  species: string;
-  breedId: string;
+  species: 'DOG' | 'CAT' | 'OTHER';
+  breed: Breed;
   gender: 'MALE' | 'FEMALE' | 'UNSET';
   imageUrl: string;
   status: 'NEW_ARRIVAL' | 'ADOPTABLE' | 'TREATMENT' | 'UNSET';

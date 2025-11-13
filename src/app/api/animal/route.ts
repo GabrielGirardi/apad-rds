@@ -42,9 +42,9 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { name, description, species, breedId, gender, imageUrl, status } = body;
+    const { name, description, species, breed, gender, imageUrl, status } = body;
     const newAnimal = await prisma.animal.create({
-        data: { name, description, species, breedId, gender, imageUrl, status },
+        data: { name, description, species, breed, gender, imageUrl, status },
     });
     return NextResponse.json(newAnimal, { status: 201 });
 }

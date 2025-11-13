@@ -53,8 +53,16 @@ export async function POST(request: Request) {
   const { name, email, password, role, isActive, validUntil, personId } = body;
   const hashedPassword = await bcrypt.hash(password, 10)
 
+  const now = new Date();
+  now.setFullYear(now.getFullYear() + 1);
+  const defaultValidUntil = now.toISOString();
+
+  let validUntilValue;
+
+  if (!validUntil || validUntil === '') validUntilValue = defaultValidUntil;
+
   const newUser = await prisma.user.create({
-    data: { name, email, password: hashedPassword, role, isActive, validUntil, personId },
+    data: { name, email, password: hashedPassword, role, isActive, validUntil: validUntilValue, personId },
   });
   return NextResponse.json(newUser, { status: 201 });
 }

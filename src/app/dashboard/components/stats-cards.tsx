@@ -1,5 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, UserCheck, FileText, PawPrint, Calendar, Heart, Search } from "lucide-react";
+import { Users, UserCheck, FileText, PawPrint, Calendar, Heart, Home } from "lucide-react";
 
 interface StatsCardsProps {
   data: {
@@ -9,7 +9,7 @@ interface StatsCardsProps {
     totalAnimals: number;
     totalCampaigns: number;
     totalEvents: number;
-    totalBreeds: number;
+    totalAnimalAdopted: number;
   }
 }
 
@@ -58,11 +58,11 @@ export function StatsCards({ data }: StatsCardsProps) {
       color: "from-[#7c1f3a] to-[#962649]",
     },
     {
-      title: "Raças",
-      description: "Raças catalogadas",
-      value: data.totalBreeds,
-      icon: Search,
-      color: "from-[#b83559] to-[#d94469]",
+      title: "Adoções",
+      description: "Animais adotados",
+      value: data.totalAnimalAdopted,
+      icon: Home,
+      color: "from-[#7c1f3a] to-[#962649]",
     },
   ];
 

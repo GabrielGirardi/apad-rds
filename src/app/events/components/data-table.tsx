@@ -93,7 +93,9 @@ import {
   IconChevronLeft,
   IconChevronRight,
   IconChevronsLeft,
-  IconChevronsRight, IconCircleCheckFilled, IconCircleXFilled,
+  IconChevronsRight, 
+  IconCircleCheckFilled,
+  IconCircleXFilled,
   IconDotsVertical,
   IconLayoutColumns
 } from "@tabler/icons-react";
@@ -106,7 +108,9 @@ export const schema = z.object({
   tags: z.array(z.string()),
   createdAt: z.string(),
   updatedAt: z.string(),
+  startAt: z.string(),
   finishAt: z.string(),
+  organizer: z.string().optional(),
 });
 
 type EventRow = z.infer<typeof schema>;
@@ -190,12 +194,31 @@ const columns: ColumnDef<EventRow>[] = [
     accessorKey: "description",
     header: "Descrição",
     enableColumnFilter: true,
-    cell: ({ row }: { row: Row<EventRow> }) => <TableCellViewer item={row.original} />,
+    cell: ({ row }: { row: Row<EventRow> }) => <p>{row.original.description}</p>,
     enableHiding: false,
   },
   {
+    accessorKey: "organizer",
+    header: "Organizador",
+    enableColumnFilter: true,
+    cell: ({ row }: { row: Row<EventRow> }) =><p>{row.original.organizer || 'Não definido'}</p>,
+    enableHiding: false,
+  },
+  {
+    accessorKey: "startAt",
+    header: "Data de inicio",
+    enableColumnFilter: true,
+    cell: ({ row }: { row: Row<EventRow> }) => (
+      <div>
+        <Badge variant="outline" className="text-muted-foreground px-1.5">
+          {new Date(row.original.startAt).toLocaleDateString("pt-BR")}
+        </Badge>
+      </div>
+    ),
+  },
+  {
     accessorKey: "finishAt",
-    header: "Data",
+    header: "Data de encerramento",
     enableColumnFilter: true,
     cell: ({ row }: { row: Row<EventRow> }) => (
       <div>
@@ -583,7 +606,17 @@ function TableCellViewer({ item }: { item: EventRow }) {
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-3">
                 <Label htmlFor="location">Criado em</Label>
+                <Input id="location" type="date" disabled defaultValue={item.startAt.split('T')[0]} />
+              </div>
+              <div className="flex flex-col gap-3">
+                <Label htmlFor="location">Encerra em</Label>
                 <Input id="location" type="date" disabled defaultValue={item.createdAt.split('T')[0]} />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex flex-col gap-3">
+                <Label htmlFor="organizer">Status</Label>
+                <Input id="organizer" disabled defaultValue={item.organizer ? item.organizer : 'Não definido'} />
               </div>
               <div className="flex flex-col gap-3">
                 <Label htmlFor="status">Status</Label>

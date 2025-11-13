@@ -12,6 +12,7 @@ const statusLabels: Record<string, string> = {
   NEW_ARRIVAL: "Recém-chegado",
   ADOPTABLE: "Disponível para Adoção",
   TREATMENT: "Em Tratamento",
+  ADOPTED: "Adotado",
   UNSET: "Não Definido",
 }
 

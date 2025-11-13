@@ -5,6 +5,8 @@ import { getRouteParam } from "@/lib/utils/url";
 import { canAccess } from "@/lib/permissions";
 import { getSession } from "@/lib/auth";
 
+import bcrypt from "bcryptjs";
+
 /**
  * Manipulação de rotas dinâmicas para usuários (users) com operações CRUD.
  *
@@ -33,10 +35,11 @@ export async function PUT(request: NextRequest) {
   }
 
   const { name, email, password, role, personId, validUntil, isActive } = await request.json();
+  const hashedPassword = await bcrypt.hash(password, 10)
 
   const updated = await prisma.user.update({
     where: { id: String(id) },
-    data: { name, email, password, role, personId, validUntil, isActive },
+    data: { name, email, password: hashedPassword, role, personId, validUntil, isActive },
   });
 
   return NextResponse.json(updated);

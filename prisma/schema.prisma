@@ -28,8 +28,41 @@ enum AnimalStatus {
   NEW_ARRIVAL
   ADOPTABLE
   TREATMENT
+  ADOPTED
   UNSET
 }
+
+enum Species {
+  DOG
+  CAT
+  OTHER
+}
+
+enum Breed {
+  LABRADOR_RETRIEVER
+  GOLDEN_RETRIEVER
+  GERMAN_SHEPHERD
+  BULLDOG
+  POODLE
+  BEAGLE
+  DACHSHUND
+  SHIH_TZU
+  CHIHUAHUA
+  MIXED_BREED_DOG
+
+  PERSIAN
+  SIAMESE
+  MAINE_COON
+  BENGAL
+  SPHYNX
+  RAGDOLL
+  BRITISH_SHORTHAIR
+  RUSSIAN_BLUE
+  MIXED_BREED_CAT
+  
+  OTHER
+}
+
 
 enum ReportStatus {
   AWAITING
@@ -76,9 +109,8 @@ model Animal {
   id          String       @id @default(cuid())
   name        String
   description String?
-  species     String
-  breed       Breed        @relation(fields: [breedId], references: [id])
-  breedId     String
+  species     Species
+  breed       Breed
   gender      Gender       @default(UNSET)
   imageUrl    String?
   status      AnimalStatus @default(UNSET)
@@ -88,23 +120,17 @@ model Animal {
   @@map("animals")
 }
 
-model Breed {
-  id      String @id @default(cuid())
-  name    String
-  animals Animal[]
-
-  @@map("breeds")
-}
-
 model Event {
   id          String  @id @default(cuid())
   title       String
   description String?
   isActive    Boolean @default(true)
   tags        String[]
+  organizer   String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   finishAt    DateTime @db.Date
+  startAt     DateTime @db.Date
 
   @@map("events")
 }

@@ -5,7 +5,13 @@ CREATE TYPE "Role" AS ENUM ('ADMIN', 'VIEWER');
 CREATE TYPE "Gender" AS ENUM ('MALE', 'FEMALE', 'UNSET');
 
 -- CreateEnum
-CREATE TYPE "AnimalStatus" AS ENUM ('NEW_ARRIVAL', 'ADOPTABLE', 'TREATMENT', 'UNSET');
+CREATE TYPE "AnimalStatus" AS ENUM ('NEW_ARRIVAL', 'ADOPTABLE', 'TREATMENT', 'ADOPTED', 'UNSET');
+
+-- CreateEnum
+CREATE TYPE "Species" AS ENUM ('DOG', 'CAT', 'OTHER');
+
+-- CreateEnum
+CREATE TYPE "Breed" AS ENUM ('LABRADOR_RETRIEVER', 'GOLDEN_RETRIEVER', 'GERMAN_SHEPHERD', 'BULLDOG', 'POODLE', 'BEAGLE', 'DACHSHUND', 'SHIH_TZU', 'CHIHUAHUA', 'MIXED_BREED_DOG', 'PERSIAN', 'SIAMESE', 'MAINE_COON', 'BENGAL', 'SPHYNX', 'RAGDOLL', 'BRITISH_SHORTHAIR', 'RUSSIAN_BLUE', 'MIXED_BREED_CAT', 'OTHER');
 
 -- CreateEnum
 CREATE TYPE "ReportStatus" AS ENUM ('AWAITING', 'IN_PROGRESS', 'UNDER_REVIEW', 'APPROVED', 'REJECTED', 'COMPLETED', 'CANCELLED', 'ON_HOLD');
@@ -45,8 +51,8 @@ CREATE TABLE "animals" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT,
-    "species" TEXT NOT NULL,
-    "breedId" TEXT NOT NULL,
+    "species" "Species" NOT NULL,
+    "breed" "Breed" NOT NULL,
     "gender" "Gender" NOT NULL DEFAULT 'UNSET',
     "imageUrl" TEXT,
     "status" "AnimalStatus" NOT NULL DEFAULT 'UNSET',
@@ -57,23 +63,17 @@ CREATE TABLE "animals" (
 );
 
 -- CreateTable
-CREATE TABLE "breeds" (
-    "id" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
-
-    CONSTRAINT "breeds_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "events" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT,
     "isActive" BOOLEAN NOT NULL DEFAULT true,
     "tags" TEXT[],
+    "organizer" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "finishAt" DATE NOT NULL,
+    "startAt" DATE NOT NULL,
 
     CONSTRAINT "events_pkey" PRIMARY KEY ("id")
 );
@@ -117,6 +117,3 @@ CREATE UNIQUE INDEX "people_cpf_key" ON "people"("cpf");
 
 -- AddForeignKey
 ALTER TABLE "users" ADD CONSTRAINT "users_personId_fkey" FOREIGN KEY ("personId") REFERENCES "people"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "animals" ADD CONSTRAINT "animals_breedId_fkey" FOREIGN KEY ("breedId") REFERENCES "breeds"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

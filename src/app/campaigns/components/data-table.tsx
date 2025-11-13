@@ -99,7 +99,7 @@ export const schema = z.object({
   id: z.string(),
   title: z.string(),
   description: z.string().optional().nullable(),
-  targetAmount: z.string().optional().nullable(), // Prisma Decimal serialized as string
+  targetAmount: z.string().optional().nullable(),
   isActive: z.boolean(),
   createdAt: z.string(),
   updatedAt: z.string(),

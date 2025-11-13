@@ -1,9 +1,9 @@
 import * as React from "react";
 import { useMutation } from "@tanstack/react-query";
-import { saveAnimal } from "@/lib/api/animal";
+import { Breed } from "@prisma/client";
 import { toast } from "sonner";
 
-import { useBreed } from "@/hooks/use-breed";
+import { saveAnimal } from "@/lib/api/animal";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -43,23 +43,48 @@ type AnimalFormProps = {
     id: string;
     name: string;
     description?: string;
-    species: string;
-    breedId: string;
+    species: 'DOG' | 'CAT' | 'OTHER';
+    breed: Breed;
     gender: 'MALE' | 'FEMALE' | 'UNSET';
     imageUrl: string;
     status: 'NEW_ARRIVAL' | 'ADOPTABLE' | 'TREATMENT' | 'UNSET';
   };
 };
 
-type breedData = {
-    id: string;
-    name: string;
-};
-
 type AnimalFormState = {
   type: 'edit' | 'create';
   onRefresh: () => void;
 };
+
+const breedOptions: Record<'DOG' | 'CAT' | 'OTHER', { value: Breed; label: string }[]> = {
+  DOG: [
+    { value: 'LABRADOR_RETRIEVER', label: 'Labrador Retriever' },
+    { value: 'GOLDEN_RETRIEVER', label: 'Golden Retriever' },
+    { value: 'GERMAN_SHEPHERD', label: 'Pastor Alemão' },
+    { value: 'BULLDOG', label: 'Bulldog' },
+    { value: 'POODLE', label: 'Poodle' },
+    { value: 'BEAGLE', label: 'Beagle' },
+    { value: 'DACHSHUND', label: 'Dachshund' },
+    { value: 'SHIH_TZU', label: 'Shih Tzu' },
+    { value: 'CHIHUAHUA', label: 'Chihuahua' },
+    { value: 'MIXED_BREED_DOG', label: 'Vira-lata' },
+  ],
+  CAT: [
+    { value: 'PERSIAN', label: 'Persa' },
+    { value: 'SIAMESE', label: 'Siamês' },
+    { value: 'MAINE_COON', label: 'Maine Coon' },
+    { value: 'BENGAL', label: 'Bengal' },
+    { value: 'SPHYNX', label: 'Sphynx' },
+    { value: 'RAGDOLL', label: 'Ragdoll' },
+    { value: 'BRITISH_SHORTHAIR', label: 'British Shorthair' },
+    { value: 'RUSSIAN_BLUE', label: 'Russian Blue' },
+    { value: 'MIXED_BREED_CAT', label: 'Vira-lata' },
+  ],
+  OTHER: [
+    { value: 'OTHER', label: 'Outro' },
+  ],
+};
+
 
 export default function AnimalForm({
   initialData,
@@ -69,13 +94,11 @@ export default function AnimalForm({
   const [open, setOpen] = React.useState(false);
   const [name, setName] = React.useState(initialData?.name || '');
   const [description, setDescription] = React.useState(initialData?.description || '');
-  const [species, setSpecies] = React.useState(initialData?.species || '');
-  const [breed, setBreed] = React.useState(initialData?.breedId || '');
+  const [species, setSpecies] = React.useState<'DOG' | 'CAT' | 'OTHER'>(initialData?.species || 'DOG');
+  const [breed, setBreed] = React.useState<Breed>(initialData?.breed || 'OTHER');
   const [gender, setGender] = React.useState(initialData?.gender || 'UNSET');
   const [imageUrl, setImageUrl] = React.useState(initialData?.imageUrl || '');
   const [status, setStatus] = React.useState(initialData?.status || 'UNSET');
-  
-  const { data, isLoading } = useBreed(open);
 
   const isEditing = !!initialData;
   const mutation = useMutation({
@@ -84,7 +107,7 @@ export default function AnimalForm({
         name,
         description,
         species,
-        breedId: breed,
+        breed,
         gender,
         imageUrl,
         status
@@ -95,8 +118,8 @@ export default function AnimalForm({
       setOpen(false);
       setName('');
       setDescription('');
-      setSpecies('');
-      setBreed('');
+      setSpecies('DOG');
+      setBreed('OTHER');
       setGender('UNSET');
       setImageUrl('');
       setStatus('UNSET');
@@ -151,34 +174,56 @@ export default function AnimalForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="species" className="flex items-center gap-2">
-                <Layers className="w-4 h-4" />
-                Espécie
+              <Label htmlFor="species" className="text-sm font-medium text-gray-700 dark:text-gray-200 flex items-center gap-2">
+                  <Layers className="w-4 h-4 text-gray-500 dark:text-gray-200" />
+                  Espécie
               </Label>
-              <Input id="species" value={species} onChange={(e) => setSpecies(e.target.value)} required />
+              <Select value={species} onValueChange={(value: string) => setSpecies(value as 'DOG' | 'CAT' | 'OTHER')}>
+                <SelectTrigger className="!h-11 border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full">
+                    <SelectValue placeholder="Selecione uma espécie" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="DOG">
+                      <div className="flex items-center gap-2">
+                      <span>Cachorro</span>
+                      </div>
+                  </SelectItem>
+                  <SelectItem value="CAT">
+                      <div className="flex items-center gap-2">
+                      <span>Gato</span>
+                      </div>
+                  </SelectItem>
+                  <SelectItem value="OTHER">
+                      <div className="flex items-center gap-2">
+                      <span>Outro</span>
+                      </div>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="space-y-2">
-                <Label htmlFor="person" className="text-sm font-medium text-gray-700 dark:text-gray-200 flex items-center gap-2">
-                    <Tag className="w-4 h-4 text-gray-500 dark:text-gray-200" />
-                    Raça
-                </Label>
-                <Select value={breed} onValueChange={setBreed}>
-                    <SelectTrigger className="!h-11 border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full">
-                        <SelectValue placeholder={isLoading ? 'Carregando...' : 'Selecione uma raça'} />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {data?.map((breed: breedData) => (
-                        <SelectItem key={breed.id} value={breed.id}>
-                            <div className="flex items-center gap-2">
-                            <Tag className="w-4 h-4" />
-                            <span>{breed.name}</span>
-                            </div>
-                        </SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
+              <Label htmlFor="breed" className="text-sm font-medium text-gray-700 dark:text-gray-200 flex items-center gap-2">
+                <Tag className="w-4 h-4 text-gray-500 dark:text-gray-200" />
+                Raça
+              </Label>
+              <Select value={breed} onValueChange={(value: Breed) => setBreed(value)} disabled={!species}>
+                <SelectTrigger className="!h-11 border-gray-300 focus:border-blue-500 focus:ring-blue-500 w-full">
+                  <SelectValue placeholder={species ? 'Selecione uma raça' : 'Selecione uma espécie primeiro'} />
+                </SelectTrigger>
+                <SelectContent>
+                {(species === 'DOG' || species === 'CAT' || species === 'OTHER') &&
+                  breedOptions[species].map(({ value, label }) => (
+                    <SelectItem key={value} value={value}>
+                      <div className="flex items-center gap-2">
+                        <span>{label}</span>
+                      </div>
+                    </SelectItem>
+                ))}
+                </SelectContent>
+              </Select>
             </div>
+
 
             <div className="space-y-2">
               <Label htmlFor="gender" className="flex items-center gap-2">
@@ -210,6 +255,7 @@ export default function AnimalForm({
                   <SelectItem value="UNSET">Não definido</SelectItem>
                   <SelectItem value="NEW_ARRIVAL">Recém-chegado</SelectItem>
                   <SelectItem value="ADOPTABLE">Adotável</SelectItem>
+                  <SelectItem value="ADOPTED">Adotado</SelectItem>
                   <SelectItem value="TREATMENT">Em tratamento</SelectItem>
                 </SelectContent>
               </Select>

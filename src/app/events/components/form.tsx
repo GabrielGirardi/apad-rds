@@ -34,6 +34,8 @@ type EventFormProps = {
     title: string;
     description?: string;
     tags: string[];
+    organizer?: string;
+    startAt: string;
     finishAt: string;
     isActive: boolean;
   };
@@ -53,9 +55,9 @@ const [open, setOpen] = React.useState(false);
   const [title, setTitle] = React.useState(initialData?.title || '');
   const [description, setDescription] = React.useState(initialData?.description || '');
   const [tags, setTags] = React.useState(initialData?.tags.join(', ') || '');
-  const [finishAt, setFinishAt] = React.useState(
-    initialData?.finishAt ? initialData.finishAt.split('T')[0] : ''
-  );
+  const [startAt, setStartAt] = React.useState(initialData?.startAt ? initialData.startAt.split('T')[0] : '');
+  const [finishAt, setFinishAt] = React.useState(initialData?.finishAt ? initialData.finishAt.split('T')[0] : '');
+  const [organizer, setOrganizer] = React.useState(initialData?.organizer || '');
   const [isActive, setIsActive] = React.useState<boolean>(initialData?.isActive ?? true);
 
   const isEditing = !!initialData;
@@ -64,7 +66,9 @@ const [open, setOpen] = React.useState(false);
       saveEvent({
         title,
         description,
+        organizer,
         tags: tags.split(',').map(tag => tag.trim()),
+        startAt,
         finishAt,
         isActive
       }, initialData?.id),
@@ -74,8 +78,10 @@ const [open, setOpen] = React.useState(false);
       setOpen(false);
       setTitle('');
       setDescription('');
+      setOrganizer('');
       setTags('');
       setFinishAt('');
+      setStartAt('');
       setIsActive(true);
     },
     onError: () => {
@@ -142,6 +148,33 @@ const [open, setOpen] = React.useState(false);
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Informações adicionais sobre o evento"
+              />
+            </div>
+
+            <div className="space-y-2 md:col-span-2">
+              <Label htmlFor="organizer" className="flex items-center gap-2">
+                <Text className="w-4 h-4" />
+                Organizador
+              </Label>
+              <Input
+                id="organizer"
+                value={organizer}
+                onChange={(e) => setOrganizer(e.target.value)}
+                placeholder="Informações adicionais sobre o evento"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="startAt" className="flex items-center gap-2">
+                <CalendarDays className="w-4 h-4" />
+                Data de Encerramento
+              </Label>
+              <Input
+                type="date"
+                id="startAt"
+                value={startAt}
+                onChange={(e) => setStartAt(e.target.value)}
+                required
               />
             </div>
 

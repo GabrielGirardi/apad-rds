@@ -12,9 +12,9 @@ export async function getDashboardData() {
       totalAnimals,
       totalCampaigns,
       totalEvents,
-      totalBreeds,
+      totalAnimalAdopted,
       reportsByStatus,
-      animalsByStatus
+      animalsByStatus,
     ] = await Promise.all([
       prisma.person.count(),
       prisma.user.count({
@@ -28,7 +28,11 @@ export async function getDashboardData() {
       prisma.animal.count(),
       prisma.campaign.count(),
       prisma.event.count(),
-      prisma.breed.count(),
+      prisma.animal.count({
+        where: {
+          status: "ADOPTED",
+        },
+      }),
       prisma.report.groupBy({
         by: ["status"],
         _count: { status: true },
@@ -56,9 +60,9 @@ export async function getDashboardData() {
       totalAnimals,
       totalCampaigns,
       totalEvents,
-      totalBreeds,
+      totalAnimalAdopted,
       reportStatusSummary,
-      animalStatusSummary
+      animalStatusSummary,
     };
   } catch (error) {
     console.error("Erro ao buscar dados do dashboard:", error);
@@ -69,9 +73,9 @@ export async function getDashboardData() {
       totalAnimals: 0,
       totalCampaigns: 0,
       totalEvents: 0,
-      totalBreeds: 0,
+      totalAnimalAdopted: 0,
       reportStatusSummary: {},
-      animalStatusSummary: {}
+      animalStatusSummary: {},
     };
   }
 }

@@ -42,13 +42,15 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json();
-  const { title, description, tags, finishAt } = body;
+  const { title, description, organizer, tags, startAt, finishAt } = body;
 
   const newEvent = await prisma.event.create({
     data: {
       title,
       description,
+      organizer,
       tags,
+      startAt: new Date(startAt),
       finishAt: new Date(finishAt),
     },
   });

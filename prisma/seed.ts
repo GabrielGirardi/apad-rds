@@ -19,33 +19,22 @@ async function main() {
     },
   });
 
-  const breeds = await prisma.breed.createMany({
-    data: [
-      { name: "Vira-lata" },
-      { name: "Labrador" },
-      { name: "Persa" },
-      { name: "Siamês" },
-    ],
-  });
-
-  const breed = await prisma.breed.findFirst({ where: { name: "Vira-lata" } });
-
   await prisma.animal.createMany({
     data: [
       {
         name: "Mel",
-        species: "Cachorro",
-        breedId: breed!.id,
+        species: "DOG",
+        breed: "MIXED_BREED_DOG",
         gender: Gender.FEMALE,
-        imageUrl: "https://example.com/mel.jpg",
+        imageUrl: "https://picsum.photos/1000",
         status: AnimalStatus.ADOPTABLE,
       },
       {
         name: "Tigrinho",
-        species: "Gato",
-        breedId: breed!.id,
+        species: "CAT",
+        breed: "MIXED_BREED_CAT",
         gender: Gender.MALE,
-        imageUrl: "https://example.com/tigrinho.jpg",
+        imageUrl: "https://picsum.photos/1000",
         status: AnimalStatus.TREATMENT,
       },
     ],
@@ -54,9 +43,11 @@ async function main() {
   await prisma.event.create({
     data: {
       title: "Feira de Adoção",
+      organizer: "Pedro João",
       description: "Evento para adoção de animais resgatados.",
       tags: ["adoção", "animais", "evento"],
       finishAt: new Date("2025-12-10"),
+      startAt: new Date("2025-12-10"),
     },
   });
 
